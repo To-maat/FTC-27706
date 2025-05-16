@@ -5,8 +5,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.Servo;
 
-@Autonomous(name = "Autonomous Red", group = "Autonoom")
-public class AtonomousRed extends LinearOpMode {
+@Autonomous(name = "Autonomous Yellow Right", group = "Autonoom")
+public class AtonomousYellowRight extends LinearOpMode {
 
     // Define motoren
     private DcMotor frontLeftMotor;
@@ -38,13 +38,13 @@ public class AtonomousRed extends LinearOpMode {
 
             sleep(500);
 
-            driveRight(500);
+            driveLeft(450);
 
             sleep(500);
 
             driveForward(1600);
 
-            driveRight(300);
+            driveLeft(300);
 
             sleep(500);
 
@@ -54,17 +54,21 @@ public class AtonomousRed extends LinearOpMode {
 
             driveForward(1700);
 
-            driveRight(500);
+            driveLeft(500);
 
             sleep(500);
 
             driveBackwards(1600);
 
-            sleep(500);
-
-            driveForward(300);
+            driveForward(400);
 
             sleep(500);
+
+            driveRight(5000 );
+
+            sleep(500);
+
+            driveForward(250);
 
             Arm(1000);
 
@@ -95,6 +99,15 @@ public class AtonomousRed extends LinearOpMode {
     }
 
     // Function to drive to the right
+    private void driveLeft(long tijd) {
+        frontLeftMotor.setPower(-0.5);
+        frontRightMotor.setPower(0.5);
+        backLeftMotor.setPower(0.5);
+        backRightMotor.setPower(-0.5);
+        sleep(tijd);
+        stopMotoren();
+    }
+
     private void driveRight(long tijd) {
         frontLeftMotor.setPower(0.5);
         frontRightMotor.setPower(-0.5);
@@ -121,6 +134,5 @@ public class AtonomousRed extends LinearOpMode {
         frontRightMotor.setPower(0);
         backLeftMotor.setPower(0);
         backRightMotor.setPower(0);
-        armMotor.setPower(0);
     }
 }
