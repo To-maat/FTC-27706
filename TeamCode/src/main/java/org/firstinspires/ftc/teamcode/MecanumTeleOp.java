@@ -97,7 +97,7 @@ public class MecanumTeleOp extends LinearOpMode {
                 armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 armMotor.setPower(0.5);
             }
-
+            //new comment
             // DOWN ARROW: Incremental position change
             if (gamepad2.dpad_down) { //Use gamepad 2 here for the arm
                 int currentPosition = armMotor.getCurrentPosition();
