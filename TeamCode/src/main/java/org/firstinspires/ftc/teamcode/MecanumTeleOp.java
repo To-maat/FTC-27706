@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 public class MecanumTeleOp extends LinearOpMode {
 
     //Position change of arm
-    private final int POSITION_CHANGE = 5;
+    private final int POSITION_CHANGE = 200;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -27,12 +27,9 @@ public class MecanumTeleOp extends LinearOpMode {
         frontLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         backRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        // Initialize servo positions
-        double wielServoPosition = 0.5;
-        wielServo.setPosition(wielServoPosition);
 
         // Arm position constants (adjust to your needs)
-        int armUpPosition = 2500;
+        int armUpPosition = 3000;
         int armDownPosition = 0;
 
         //Initialize the arm
@@ -41,6 +38,8 @@ public class MecanumTeleOp extends LinearOpMode {
         armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         armMotor.setPower(0.5);
 
+        boolean isWielServoActive = false;
+        double wielServoPosition = 0.5; // 0.5 betekent stilstand voor een continuous rotation servo
 
         waitForStart();
 
@@ -77,6 +76,20 @@ public class MecanumTeleOp extends LinearOpMode {
                 armMotor.setPower(0.5);
             }
 
+            if (gamepad2.y) {
+                armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                int currentPosition = 0;
+                armMotor.setTargetPosition(0);
+                armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                armMotor.setPower(0.5);
+            }
+
+            if (gamepad2.x) {
+                armMotor.setTargetPosition(7000);
+                armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                armMotor.setPower(0.5);
+            }
+
             // UP ARROW: Incremental position change
             if (gamepad2.dpad_up) { //Use gamepad 2 here for the arm
                 int currentPosition = armMotor.getCurrentPosition();
@@ -93,18 +106,29 @@ public class MecanumTeleOp extends LinearOpMode {
                 armMotor.setPower(0.5);
             }
 
+
             // Control draaiServo with gamepad2 right stick
             double joystickX = gamepad2.right_stick_x;
+            if (Math.abs(joystickX) < 0.05) { // Waarden tussen -0.05 en 0.05 worden genegeerd
+                joystickX = 0;
+            }
             double draaiServoPosition = (1 - (joystickX + 1) / 2.0); // Scale -1 to 1 into 0 to 1
             draaiServo.setPosition(draaiServoPosition);
 
-            if (gamepad2.left_bumper) { //Use gamepad 2 here for the servo's
-                wielServo.setPosition(0);
-            } else if (gamepad2.right_bumper) { //Use gamepad 2 here for the servo's
-                wielServo.setPosition(1);
-            } else {
-                wielServo.setPosition(0.5);
+            if (gamepad2.left_bumper) {
+                wielServoPosition = 0;  // Draai linksom
+                isWielServoActive = true;
+            } else if (gamepad2.right_bumper) {
+                wielServoPosition = 1;  // Draai rechtsom
+                isWielServoActive = true;
+            } else if (isWielServoActive) {
+                wielServoPosition = 0.5;  // Stop servo als er geen knop wordt ingedrukt
+                isWielServoActive = false;
             }
+
+
+// Zet de servo alleen als de positie veranderd is
+            wielServo.setPosition(wielServoPosition);
 
             // Telemetry for debugging
             telemetry.addData("Draai Servo Joystick Input", joystickX);
